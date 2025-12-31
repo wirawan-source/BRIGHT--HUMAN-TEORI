@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bright Human Theory - Eternal Archive Export</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-red: #b71c1c;
+            --bright-gold: #d4af37;
+            --archive-dark: #2c3e50;
+            --glass-white: rgba(255, 255, 255, 0.95);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding-bottom: 50px;
+        }
+        header {
+            background: var(--primary-red);
+            padding: 1.5rem;
+            color: white;
+            text-align: center;
+            border-bottom: 4px solid var(--bright-gold);
+        }
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 2rem auto;
+            border: 1px solid #ddd;
+        }
+        #pdf-content { padding: 10px; }
+        h1 { color: var(--primary-red); text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: var(--bright-gold); font-weight: bold; margin-bottom: 20px; font-size: 0.9rem; }
+        
+        .form-info { margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; }
+        .label-text { font-weight: bold; color: var(--archive-dark); display: block; margin-bottom: 5px; }
+        .value-text { background: #f9f9f9; padding: 10px; border-radius: 5px; min-height: 20px; border-left: 3px solid var(--bright-gold); }
+
+        .btn-container { display: flex; gap: 10px; margin-top: 20px; }
+        button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-save { background: var(--primary-red); color: white; }
+        .btn-pdf { background: var(--archive-dark); color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        footer { text-align: center; font-size: 0.8rem; color: #666; margin-top: 20px; }
+        .originator { color: var(--bright-gold); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>BRIGHT HUMAN ETERNAL ARCHIVE</h2>
+</header>
+
+<div class="container" id="capture-area">
+    <div id="pdf-content">
+        <h1>Arsip Partisipasi</h1>
+        <div class="subtitle">IPM Indonesia Emas × Bright Human Theory</div>
+        <hr style="border: 1px solid var(--bright-gold); margin-bottom: 20px;">
+
+        <div class="form-group form-info">
+            <span class="label-text">Lokasi/Alamat:</span>
+            <input type="text" id="input-alamat" placeholder="Masukkan alamat..." style="width:100%; border:none; background:transparent;">
+            <div id="display-alamat" class="value-text" style="display:none;"></div>
+        </div>
+
+        <div class="form-group form-info">
+            <span class="label-text">Kategori Konten:</span>
+            <input type="text" id="input-konten" placeholder="Jenis konten..." style="width:100%; border:none; background:transparent;">
+            <div id="display-konten" class="value-text" style="display:none;"></div>
+        </div>
+
+        <div class="form-group form-info">
+            <span class="label-text">Pesan untuk Masa Depan:</span>
+            <textarea id="input-pesan" rows="4" placeholder="Tuliskan pemikiran Anda..." style="width:100%; border:none; background:transparent;"></textarea>
+            <div id="display-pesan" class="value-text" style="display:none;"></div>
+        </div>
+
+        <p style="font-size: 0.7rem; color: #888; text-align: center;">
+            Dokumen ini dihasilkan secara otomatis sebagai bagian dari pelestarian data Bright Human.
+        </p>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-pdf" onclick="generatePDF()">EKSPOR KE PDF (ARSIP)</button>
+    </div>
+</div>
+
+<footer>
+    © 2025 IPM Indonesia Emas<br>
+    Originator: <span class="originator">EDY SURYO WIRAWAN</span>
+</footer>
+
+<script>
+    function generatePDF() {
+        const element = document.getElementById('capture-area');
+        
+        // Ambil nilai dari input
+        const alamat = document.getElementById('input-alamat').value;
+        const konten = document.getElementById('input-konten').value;
+        const pesan = document.getElementById('input-pesan').value;
+
+        // Validasi sederhana
+        if(!alamat || !pesan) {
+            alert("Mohon isi data terlebih dahulu sebelum mengarsipkan.");
+            return;
+        }
+
+        // Sembunyikan input, tampilkan teks untuk PDF yang rapi
+        document.getElementById('display-alamat').innerText = alamat;
+        document.getElementById('display-konten').innerText = konten;
+        document.getElementById('display-pesan').innerText = pesan;
+        
+        document.getElementById('input-alamat').style.display = 'none';
+        document.getElementById('input-konten').style.display = 'none';
+        document.getElementById('input-pesan').style.display = 'none';
+        
+        document.getElementById('display-alamat').style.display = 'block';
+        document.getElementById('display-konten').style.display = 'block';
+        document.getElementById('display-pesan').style.display = 'block';
+        
+        // Sembunyikan tombol saat proses cetak
+        const btnContainer = document.querySelector('.btn-container');
+        btnContainer.style.display = 'none';
+
+        // Konfigurasi PDF
+        const opt = {
+            margin:       10,
+            filename:     'Eternal-Archive-BrightHuman.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Jalankan ekspor
+        html2pdf().set(opt).from(element).save().then(() => {
+            // Kembalikan tampilan setelah PDF selesai dibuat
+            btnContainer.style.display = 'flex';
+            alert("Dokumen telah berhasil diarsipkan ke dalam format PDF.");
+        });
+    }
+</script>
+
+</body>
+</html>
